@@ -2,14 +2,12 @@
 
 namespace API.Entities.DTO
 {
-    public class UserGroupDTO
+    public class AccessRuleDTO
     {
-        public UserGroupDTO()
-        {
-
-        }
         public int Id { get; set; }
         [Required]
-        public string UserGroupName { get; set; }
+        public string AccessRuleName { get; set; }
+        [Required]
+        public bool Permission { get; set; }
     }
 }

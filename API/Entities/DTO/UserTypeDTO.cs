@@ -2,14 +2,10 @@
 
 namespace API.Entities.DTO
 {
-    public class UserGroupDTO
+    public class UserTypeDTO
     {
-        public UserGroupDTO()
-        {
-
-        }
         public int Id { get; set; }
         [Required]
-        public string UserGroupName { get; set; }
+        public string UserTypeName { get; set; }
     }
 }

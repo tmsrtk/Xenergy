@@ -15,6 +15,13 @@ namespace API.Data
 
         }
         public DbSet<UserGroup> UserGroups{get; set;}
-        
+
+        public DbSet<UserType> UserTypes { get; set; }
+
+        public DbSet<AccessRule> AccessRules { get; set; }
+
+        public DbSet<User> Users { get; set; }
+
+        public DbSet<UserGroupAccessRule> UserGroupAccessRule { get; set; }
     }
 }

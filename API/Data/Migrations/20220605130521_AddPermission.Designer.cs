@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220605130521_AddPermission")]
+    partial class AddPermission
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.5");
@@ -87,27 +89,6 @@ namespace API.Data.Migrations
                     b.ToTable("UserGroups");
                 });
 
-            modelBuilder.Entity("Xenergy.Entities.UserGroupAccessRule", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("AccessRuleId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("UserGroupId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccessRuleId");
-
-                    b.HasIndex("UserGroupId");
-
-                    b.ToTable("UserGroupAccessRule");
-                });
-
             modelBuilder.Entity("Xenergy.Entities.UserType", b =>
                 {
                     b.Property<int>("Id")
@@ -136,21 +117,6 @@ namespace API.Data.Migrations
                     b.Navigation("UserGroup");
 
                     b.Navigation("UserType");
-                });
-
-            modelBuilder.Entity("Xenergy.Entities.UserGroupAccessRule", b =>
-                {
-                    b.HasOne("Xenergy.Entities.AccessRule", "AccessRule")
-                        .WithMany()
-                        .HasForeignKey("AccessRuleId");
-
-                    b.HasOne("Xenergy.Entities.UserGroup", "UserGroup")
-                        .WithMany()
-                        .HasForeignKey("UserGroupId");
-
-                    b.Navigation("AccessRule");
-
-                    b.Navigation("UserGroup");
                 });
 #pragma warning restore 612, 618
         }

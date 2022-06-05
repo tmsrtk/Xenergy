@@ -9,6 +9,9 @@ namespace API.Mapper
         public Mappings()
         {
             CreateMap<UserGroup, UserGroupDTO>().ReverseMap();
+            CreateMap<UserType, UserTypeDTO>().ReverseMap();
+            CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<AccessRule, AccessRuleDTO>().ReverseMap();
         }
     }
 }

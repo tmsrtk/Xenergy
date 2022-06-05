@@ -25,6 +25,9 @@ namespace API
 
             services.AddControllers();
             services.AddScoped<IUserGroupRepository, UserGroupRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAccessRuleRepository, AccessRuleRepository>();
+            services.AddScoped<IUserTypeRepository, UserTypeRepository>();
             services.AddAutoMapper(profileAssemblyMarkerTypes: typeof(Mappings));
             services.AddSwaggerGen(options =>
             {
