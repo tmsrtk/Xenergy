@@ -262,14 +262,14 @@ namespace API.Controllers
                 }
             }
 
-            if (accessRuleAssignDTO.AccessRules.Any())
+            if (accessRuleAssignDTO.AccessRuleIDs.Any())
             {
                 List<UserGroupAccessRule> UserGroupAccessRules = new List<UserGroupAccessRule>();
-                foreach (var accessRule in accessRuleAssignDTO.AccessRules)
+                foreach (var accessRuleId in accessRuleAssignDTO.AccessRuleIDs)
                 {
                     UserGroupAccessRule userGroupAccessRule = new UserGroupAccessRule();
                     AccessRule access = new AccessRule();
-                    access = _mapper.Map<AccessRule>(accessRule);
+                    access = _accessRuleRepository.GetAccessRule(accessRuleId);
                     UserGroup userGroup = _userGroupRepository.GetUserGroup(id);
                     userGroupAccessRule.UserGroup = userGroup;
                     userGroupAccessRule.AccessRule = access;
@@ -284,6 +284,118 @@ namespace API.Controllers
             }
             return NoContent();
 
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(List<UserDTO>))]
+        [ProducesResponseType(400)]
+        [Route("users/")]
+        public IActionResult GetUsers()
+        {
+            var users = _userRepository.GetUsers();
+            var userDTOs = new List<UserDTO>();
+            foreach (var user in users)
+            {
+                userDTOs.Add(_mapper.Map<UserDTO>(user));
+            }
+            return Ok(userDTOs);
+        }
+
+        [HttpGet("user/{id:int}", Name = "GetUser")]
+        [ProducesResponseType(200, Type = typeof(UserDTO))]
+        [ProducesResponseType(400)]
+        public IActionResult GetUser(int id)
+        {
+            var user = _userRepository.GetUser(id);
+            var userDTO = new UserDTO();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                userDTO = _mapper.Map<UserDTO>(user);
+                return Ok(userDTO);
+            }
+        }
+
+
+        [HttpPost]
+        [ProducesResponseType(201, Type = typeof(UserDTO))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Route("user/")]
+        public IActionResult CreateUser([FromBody] UserUpsertDTO userUpsertDTO)
+        {
+            if (userUpsertDTO == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if (_userRepository.UserExists(userUpsertDTO.UserName))
+            {
+                ModelState.AddModelError("", "User already exists");
+                return StatusCode(404, ModelState);
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = new User();
+            user = _mapper.Map<User>(userUpsertDTO);
+            user.UserGroup = _userGroupRepository.GetUserGroup(userUpsertDTO.UserGroupId);
+            user.UserType = _userTypeRepository.GetUserType(userUpsertDTO.UserTypeId);
+            bool success = _userRepository.CreateUser(user);
+            if (!success)
+            {
+                ModelState.AddModelError("", $"Something went wrong when adding User {userUpsertDTO.UserName}");
+                return StatusCode(500, ModelState);
+
+            }
+            return CreatedAtRoute("GetUser", new { id = user.Id }, user);
+        }
+
+        [HttpPatch("user/{Id:int}", Name = "UpdateUser")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult UpdateUser(int userId, [FromBody] UserUpsertDTO userUpsertDTO)
+        {
+            if (userUpsertDTO == null || userUpsertDTO.Id != userId)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = new User();
+            user = _mapper.Map<User>(userUpsertDTO);
+            user.UserGroup = _userGroupRepository.GetUserGroup(userUpsertDTO.UserGroupId);
+            user.UserType = _userTypeRepository.GetUserType(userUpsertDTO.UserTypeId);
+            if (!_userRepository.UpdateUser(user))
+            {
+                ModelState.AddModelError("", $"Something went wrong when upddating User {userUpsertDTO.UserName}");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("user/{id:int}", Name = "DeleteUser")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult DeleteUser(int id)
+        {
+            if (!_userRepository.UserExists(id))
+            {
+                return NotFound();
+            }
+            var user = _userRepository.GetUser(id);
+            if (!_userRepository.DeleteUser(user))
+            {
+                ModelState.AddModelError("", $"Something went wrong when deleting User {user.UserName}");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
         }
     }
 }

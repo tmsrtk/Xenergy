@@ -2,7 +2,7 @@
 
 namespace API.Entities.DTO
 {
-    public class UserDTO
+    public class UserUpsertDTO
     {
         public int Id { get; set; }
         [Required]
@@ -13,14 +13,7 @@ namespace API.Entities.DTO
         public string LastName { get; set; }
         [Required]
         public string Email { get; set; }
-        public UserTypeDTO UserType { get; set; }
-        public UserGroupDTO UserGroup { get; set; }
-
-        private string fullName;
-
-        public string GetFullName()
-        {
-            return this.FirstName + this.LastName;
-        }
+        public int UserTypeId { get; set; }
+        public int UserGroupId { get; set; }
     }
 }

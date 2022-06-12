@@ -12,6 +12,7 @@ namespace API.Mapper
             CreateMap<UserType, UserTypeDTO>().ReverseMap();
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<AccessRule, AccessRuleDTO>().ReverseMap();
+            CreateMap<User, UserUpsertDTO>().ReverseMap();
         }
     }
 }
